@@ -25,36 +25,17 @@
 </div>
  -->
 
-
-	'./jstree.js',
-				'tasklistbase://../../api/tasklist/plugin/process-tree-plugin/static/lib/jstree.js',
-				'tasklistbase://../../api/tasklist/plugin/process-tree-plugin/static/lib/ngJsTree.js'
-
-
-<!-- script src="./lib/jstree.js" type="text/javascript"> </script -->
-<!-- script src="./lib/ngJsTree.js" type="text/javascript"> </script -->
-
-<!-- script ng-src="tasklistbase://../../api/tasklist/plugin/process-tree-plugin/static/lib/jstree.js" type="text/javascript"> </script -->
-<!-- script ng-src="tasklistbase://../../api/tasklist/plugin/process-tree-plugin/static/lib/ngJsTree.js" type="text/javascript"> </script -->
-
-<script src="/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/jstree.js" type="text/javascript"> </script>
-<script src="/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/ngJsTree.js" type="text/javascript"> </script>
-
-
-
 <div>
-12345
 {{treeData}}
+<!-- div js-tree ng-model="treeData"></div -->
 <div js-tree="treeConfig" ng-model="treeData"
 	should-apply="true" tree="treeInstance"
 	tree-events="ready:readyCB;create_node:createNodeCB"></div>
-	67890
 </div>
   
 <!-- div js-tree="treeConfig" ng-model="treeData"
 	should-apply="ignoreModelChanges()" tree="treeInstance"
 	tree-events="ready:readyCB;create_node:createNodeCB"></div -->
-
 
 <div class="tree-pane" cam-widget-process-tree-bpmn-viewer
 	process-instance-id="xxx" on-load="highlightTask()" control="control">

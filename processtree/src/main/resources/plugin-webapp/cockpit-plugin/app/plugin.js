@@ -1,8 +1,13 @@
 define(
-		[ 'angular'],
-		function(angular) {
+		[
+				'angular',
+				'/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/jstree.js',
+				'/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/ngJsTree.js' ],
+
+		function(angular, jstree, ngJsTree) {
+
 			var ngModule = angular.module(
-					'tasklist.plugin.process-tree-plugin', []);
+					'tasklist.plugin.process-tree-plugin', [ 'ngJsTree' ]);
 
 			var Controller = [
 					'$scope',

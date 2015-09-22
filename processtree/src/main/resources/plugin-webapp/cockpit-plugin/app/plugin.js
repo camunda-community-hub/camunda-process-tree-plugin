@@ -1,6 +1,6 @@
 define(
-		[ 'angular' ],
-		function(angular, treeService) {
+		[ 'angular'],
+		function(angular) {
 			var ngModule = angular.module(
 					'tasklist.plugin.process-tree-plugin', []);
 
@@ -13,6 +13,19 @@ define(
 					'treeService',
 					function($scope, $modal, $http, camAPI, dataDepend,
 							treeService) {
+
+						$scope.treeData = [ 'Simple root node', {
+							'id' : 'node_2',
+							'text' : 'Root node with options',
+							'state' : {
+								'opened' : true,
+								'selected' : true
+							},
+							'children' : [ {
+								'text' : 'Child 1'
+							}, 'Child 2' ]
+						} ];
+
 						console.log(treeService);
 						treeService.method1();
 						var ProcessDefinition = camAPI
@@ -48,6 +61,8 @@ define(
 								{
 									id : 'tasklist-plugin',
 									label : 'Process Tree',
+									// url :
+									// 'plugin://process-tree-plugin/static/app/test.html',
 									url : 'tasklistbase://../../api/tasklist/plugin/process-tree-plugin/static/app/test.html',
 									controller : Controller,
 									priority : 200
@@ -61,11 +76,11 @@ define(
 
 			ngModule.factory('treeService', function() {
 				var newFactory = {};
-				newFactory.method1 = function() {			
+				newFactory.method1 = function() {
 					console.log('factory created.');
-				}		
+				}
 				return newFactory;
 			});
-			
+
 			return ngModule;
 		});

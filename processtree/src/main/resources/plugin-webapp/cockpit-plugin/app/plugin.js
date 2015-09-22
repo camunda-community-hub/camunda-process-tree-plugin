@@ -42,6 +42,18 @@ define(
 								}
 							});
 						});
+						
+						$scope.readyCB = function() {
+					        console.log('ready called');
+					    };
+					    
+					    $scope.selectNodeCB = function(node, selected, event) {
+					    	console.log('selectNodeCB called');
+					    	console.log(node);
+					    	console.log(selected);
+					    };
+					    
+					    
 					} ];
 
 			var Configuration = function PluginConfiguration(ViewsProvider) {

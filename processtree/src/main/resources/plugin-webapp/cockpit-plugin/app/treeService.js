@@ -1,10 +1,28 @@
 define([ 'angular' ], function(angular) {
-	var ngModule = angular.module('tasklist.plugin.process-tree-plugin', []);
+	
+	var ngModule = angular.module('treeService', []);
+	
 	ngModule.factory('treeService', function() {
-		var newFactory;
-		newFactory.method1 = function() {			
-			console.log('factory created.');
-		}		
-		return newFactory;
+	
+		var treeServiceFactory = {};
+		
+		treeServiceFactory.treeDataById = function(id) {
+			
+			console.log('Building tree data with id: ' + id);
+			
+			return [ 'Simple root node', {
+				'id' : 'node_2',
+				'text' : 'Root node with options',
+				'state' : {
+					'opened' : true,
+					'selected' : true
+				},
+				'children' : [ {
+					'text' : 'Child 1'
+				}, 'Child 2' ]
+			} ];
+		}
+		return treeServiceFactory;
+	
 	});
 });

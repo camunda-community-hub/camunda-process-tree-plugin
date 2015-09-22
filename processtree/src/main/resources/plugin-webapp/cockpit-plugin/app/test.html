@@ -25,26 +25,31 @@
 </div>
  -->
 
-<div>
-{{treeData}}
-<!-- div js-tree ng-model="treeData"></div -->
-<div js-tree="treeConfig" ng-model="treeData"
-	should-apply="true" tree="treeInstance"
-	tree-events="ready:readyCB;create_node:createNodeCB"></div>
+
+<div class="row">
+	<div class="col-sm-6">
+		<div>
+			{{treeData}}
+			<!-- div js-tree ng-model="treeData"></div -->
+			<div js-tree="treeConfig" ng-model="treeData" should-apply="true"
+				tree="treeInstance"
+				tree-events="ready:readyCB;create_node:createNodeCB"></div>
+		</div>
+
+	</div>
+	<div class="col-sm-6">
+		<div class="diagram-pane" cam-widget-bpmn-viewer
+			diagram-data="processXml" on-load="highlightTask()" control="control">
+		</div>
+	</div>
 </div>
-  
+
+
 <!-- div js-tree="treeConfig" ng-model="treeData"
 	should-apply="ignoreModelChanges()" tree="treeInstance"
 	tree-events="ready:readyCB;create_node:createNodeCB"></div -->
 
-<div class="tree-pane" cam-widget-process-tree-bpmn-viewer
+<!-- div class="tree-pane" cam-widget-process-tree-bpmn-viewer
 	process-instance-id="xxx" on-load="highlightTask()" control="control">
-</div>
+</div -->
 
-
-<div class="diagram-pane" cam-widget-bpmn-viewer
-	diagram-data="processXml" on-load="highlightTask()" control="control">
-</div>
-
-
-			

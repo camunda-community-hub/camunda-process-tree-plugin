@@ -2,12 +2,14 @@ define(
 		[
 				'angular',
 				'/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/jstree.js',
-				'/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/ngJsTree.js' ],
+				'/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/ngJsTree.js',
+				'/camunda/api/tasklist/plugin/process-tree-plugin/static/app/treeService.js' ],
 
-		function(angular, jstree, ngJsTree) {
+		function(angular, jstree, ngJsTree, treeService) {
 
 			var ngModule = angular.module(
-					'tasklist.plugin.process-tree-plugin', [ 'ngJsTree' ]);
+					'tasklist.plugin.process-tree-plugin', [ 'ngJsTree',
+							'treeService' ]);
 
 			var Controller = [
 					'$scope',
@@ -19,30 +21,16 @@ define(
 					function($scope, $modal, $http, camAPI, dataDepend,
 							treeService) {
 
-						$scope.treeData = [ 'Simple root node', {
-							'id' : 'node_2',
-							'text' : 'Root node with options',
-							'state' : {
-								'opened' : true,
-								'selected' : true
-							},
-							'children' : [ {
-								'text' : 'Child 1'
-							}, 'Child 2' ]
-						} ];
+						// TODO passing correct id here:
+						$scope.treeData = treeService.treeDataById('xxx');
 
-						console.log(treeService);
-						treeService.method1();
 						var ProcessDefinition = camAPI
 								.resource('process-definition');
-
-						var procDefId = null;
 
 						var diagramData = $scope.taskData.newChild($scope);
 
 						diagramData.observe('processDefinition', function(
 								processDefinition) {
-							console.log(processDefinition);
 							$scope.processDefinition = processDefinition;
 
 							ProcessDefinition.xml(processDefinition, function(
@@ -50,12 +38,10 @@ define(
 								if (err) {
 									throw err;
 								} else {
-									console.log(res);
 									$scope.processXml = res.bpmn20Xml;
 								}
 							});
 						});
-
 					} ];
 
 			var Configuration = function PluginConfiguration(ViewsProvider) {
@@ -78,14 +64,6 @@ define(
 
 			ngModule.config(Configuration);
 			ngModule.controller(Controller);
-
-			ngModule.factory('treeService', function() {
-				var newFactory = {};
-				newFactory.method1 = function() {
-					console.log('factory created.');
-				}
-				return newFactory;
-			});
 
 			return ngModule;
 		});

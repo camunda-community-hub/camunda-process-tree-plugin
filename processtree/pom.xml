@@ -92,5 +92,18 @@
 
   <build>
     <finalName>${project.artifactId}</finalName>
+  	<plugins>  
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <configuration>
+          <tasks>
+            <ant antfile="${basedir}/build.xml">
+              <target name="deploy.jboss.nomaven"/>
+            </ant>
+          </tasks>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

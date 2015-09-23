@@ -41,27 +41,35 @@ define([ 'angular' ], function(angular) {
 						var topInstance;
 						
 						promise.then(
+								
+								//diese verschachtelten promises sind nicht sehr sauber, man sollte 
+								//es im endeffekt so schreiben können: 
+								// findProcessInstance(id).then(enrichInstanceWithParent).then(findTopParent).then(enrichWithChildren)...
+								// geht das? Stefan kann das sicher, ich habs noch nicht ganz durchschaut...
 								function (succInstance){
-									topInstance = succInstance 
+									console.log("succInstance is: ")
+									console.log(succInstance)
+									topInstance = succInstance
+									
+									console.log("topInstance is: " + topInstance);
+									treeDataToBeFilled = topInstance.id;
+									if (topInstance != null) {
+										console.log('TOP PARENT:');
+										console.log(topInstance);
+										enrichWithChildren(topInstance, treeDataToBeFilled);
+									}
+									
 								},
 								function (error){
+									console.log(error);
 									throw error
 								}
 						);
+
 						
-						treeDataToBeFilled = topInstance.id;
-						if (topInstance != null) {
-							console.log('TOP PARENT:');
-							console.log(topInstance);
-							enrichWithChildren(topInstance, treeDataToBeFilled);
-						}
 					}
 				}
 			});
-			
-			//get the processDefinition
-			var ProcessDefinition = camAPI
-			.resource('process-definition');											
 			
 			function enrichWithChildren(instance, node) {
 				var ProcessInstance = camAPI.resource('process-instance');
@@ -88,9 +96,9 @@ define([ 'angular' ], function(angular) {
 				});
 			}
 			
-			function findTopParent(instance) {
+			function findTopParent(instance, parentDeferred) {
 				
-				var deferred = $q.defer();
+				var deferred = parentDeferred || $q.defer();
 				
 				var ProcessInstance = camAPI.resource('process-instance');
 				ProcessInstance.list({subProcessInstance: instance.id}, function(err, res) {
@@ -102,10 +110,12 @@ define([ 'angular' ], function(angular) {
 						if (superInstances.items[0] == null || superInstances.items[0]['id'] == null) {
 							instance['superProcessInstanceId']='#';									
 							enrichInstanceWithParentIfIsIncident(instance);
-							promise.resolve(instance);
+							console.log('resolving...')
+							deferred.resolve(instance);
+							console.log('resolved!')
 						} else {
 							//recursion:
-							var promise = findTopParent(superInstances.items[0]);
+							var promise = findTopParent(superInstances.items[0], deferred);
 							promise.then(
 									function(succInstance){deferred.resolve(succInstance)},
 									function(error){deferred.reject(error)}

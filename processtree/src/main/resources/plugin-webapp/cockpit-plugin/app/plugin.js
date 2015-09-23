@@ -64,9 +64,7 @@ define(
 								{
 									id : 'tasklist-plugin',
 									label : 'Process Tree',
-									// url :
-									// 'plugin://process-tree-plugin/static/app/test.html',
-									url : 'tasklistbase://../../api/tasklist/plugin/process-tree-plugin/static/app/test.html',
+									url: '/camunda/api/tasklist/plugin/process-tree-plugin/static/app/test.html',
 									controller : Controller,
 									priority : 200
 								});

@@ -1,5 +1,15 @@
 define([ 'angular' ], function(angular) {
 
+	var css = "/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/style.css";
+	$.get(css, function(data){
+		// while including the css file we lose the context of the file path, so we need to enrich the includes of the images with absolute url 
+		data = data.replace(/(\(\"32px\.png\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/32px.png")');
+		data = data.replace(/(\(\"40px\.png\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/40px.png")');
+		data = data.replace(/(\(\"throbber\.gif\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/throbber.gif")');
+	    $("<style type=\"text/css\">" + data + "</style>").appendTo(document.head);
+	});
+
+	
 	var treeServiceModule = angular.module('treeService', []);
 
 	treeServiceModule.factory('treeService', ['camAPI','$q',function(camAPI,$q) {
@@ -137,10 +147,6 @@ define([ 'angular' ], function(angular) {
 				});
 			}			
 			
-			
-			
-			
-			
 			return [ 'Simple root node', {
 				'id' : 'node_2',
 				'text' : 'Root node with options',
@@ -170,13 +176,12 @@ define([ 'angular' ], function(angular) {
 			scope.treeConfig = {
 				"core" : {
 					"themes" : {
-						"variant" : "large"
+						"variant" : "large", 
+						"icons":false
 					}
-				},
-				"checkbox" : {
-					"keep_selected_style" : false
-				},
-				"plugins" : [ "wholerow" ]
+				}
+			//,
+				//"plugins" : [ "wholerow" ]
 			}
 			
 			scope.readyCB = function() {

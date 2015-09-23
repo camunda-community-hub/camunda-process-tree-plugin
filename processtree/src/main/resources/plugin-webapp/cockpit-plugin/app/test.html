@@ -28,14 +28,7 @@
 
 <div class="row">
 	<div class="col-sm-6">
-		<div>
-			{{treeData}}
-			<!-- div js-tree ng-model="treeData"></div -->
-			<div js-tree="treeConfig" ng-model="treeData" should-apply="true"
-				tree="treeInstance"
-				tree-events="ready:readyCB;create_node:createNodeCB;select_node:selectNodeCB"></div>
-		</div>
-
+		<div process-tree id="directiveid"></div>
 	</div>
 	<div class="col-sm-6">
 		<div class="diagram-pane" cam-widget-bpmn-viewer

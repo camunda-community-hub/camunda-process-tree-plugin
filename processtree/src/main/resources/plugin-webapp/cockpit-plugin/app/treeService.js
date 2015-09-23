@@ -1,15 +1,15 @@
 define([ 'angular' ], function(angular) {
-	
-	var ngModule = angular.module('treeService', []);
-	
-	ngModule.factory('treeService', function() {
-	
+
+	var treeServiceModule = angular.module('treeService', []);
+
+	treeServiceModule.factory('treeService', function() {
+
 		var treeServiceFactory = {};
-		
+
 		treeServiceFactory.treeDataById = function(id) {
-			
+
 			console.log('Building tree data with id: ' + id);
-			
+
 			return [ 'Simple root node', {
 				'id' : 'node_2',
 				'text' : 'Root node with options',
@@ -23,6 +23,24 @@ define([ 'angular' ], function(angular) {
 			} ];
 		}
 		return treeServiceFactory;
-	
 	});
+								 
+	treeServiceModule.directive('processTree', ['treeService', function(treeService) {
+		
+		function link(scope, element, attrs) {
+			console.log('---------------------------- link function ------------------------------')
+			console.log(attrs);
+			
+			scope.treeData = treeService.treeDataById(attrs.id)
+		}
+		
+		return {
+			scope: {
+				id: '=id', 
+				//treeData: treeService.treeDataById($scope.id)
+			},
+			link: link,
+			templateUrl: '/camunda/api/tasklist/plugin/process-tree-plugin/static/app/treeService.html'
+		}
+	}]);
 });

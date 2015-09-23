@@ -21,9 +21,6 @@ define(
 					function($scope, $modal, $http, camAPI, dataDepend,
 							treeService) {
 
-						// TODO passing correct id here:
-						$scope.treeData = treeService.treeDataById('xxx');
-
 						var ProcessDefinition = camAPI
 								.resource('process-definition');
 
@@ -31,6 +28,9 @@ define(
 
 						diagramData.observe('processDefinition', function(
 								processDefinition) {
+
+							// TODO passing correct id here:
+							$scope.treeData = treeService.treeDataById('xxx');
 							$scope.processDefinition = processDefinition;
 
 							ProcessDefinition.xml(processDefinition, function(

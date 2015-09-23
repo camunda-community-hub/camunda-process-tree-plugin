@@ -26,11 +26,14 @@ define(
 
 						var diagramData = $scope.taskData.newChild($scope);
 
+						diagramData.observe('task', function(task) {
+							$scope.currentTask = task;
+						});
+
 						diagramData.observe('processDefinition', function(
 								processDefinition) {
 
-							// TODO passing correct id here:
-							$scope.treeData = treeService.treeDataById('xxx');
+							 
 							$scope.processDefinition = processDefinition;
 
 							ProcessDefinition.xml(processDefinition, function(
@@ -42,17 +45,6 @@ define(
 								}
 							});
 						});
-						
-						$scope.readyCB = function() {
-					        console.log('ready called');
-					    };
-					    
-					    $scope.selectNodeCB = function(node, selected, event) {
-					    	console.log('selectNodeCB called');
-					    	console.log(node);
-					    	console.log(selected);
-					    };
-					    
 					    
 					} ];
 

@@ -1,25 +1,21 @@
 define(
 		[
 				'angular',
+				'jquery',
 				'/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/jstree.js',
 				'/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/ngJsTree.js',
 				'/camunda/api/tasklist/plugin/process-tree-plugin/static/app/treeService.js' ],
 
-		function(angular, jstree, ngJsTree, treeService) {
+		function(angular, $, jstree, ngJsTree, treeService) {
 
-			var ngModule = angular.module(
+			var pluginModule = angular.module(
 					'tasklist.plugin.process-tree-plugin', [ 'ngJsTree',
 							'treeService' ]);
 
 			var Controller = [
 					'$scope',
-					'$modal',
-					'$http',
 					'camAPI',
-					'dataDepend',
-					'treeService',
-					function($scope, $modal, $http, camAPI, dataDepend,
-							treeService) {
+					function($scope, camAPI) {
 
 						var ProcessDefinition = camAPI
 								.resource('process-definition');
@@ -33,7 +29,6 @@ define(
 						diagramData.observe('processDefinition', function(
 								processDefinition) {
 
-							 
 							$scope.processDefinition = processDefinition;
 
 							ProcessDefinition.xml(processDefinition, function(
@@ -45,7 +40,7 @@ define(
 								}
 							});
 						});
-					    
+
 					} ];
 
 			var Configuration = function PluginConfiguration(ViewsProvider) {
@@ -56,7 +51,7 @@ define(
 								{
 									id : 'tasklist-plugin',
 									label : 'Process Tree',
-									url: '/camunda/api/tasklist/plugin/process-tree-plugin/static/app/test.html',
+									url : '/camunda/api/tasklist/plugin/process-tree-plugin/static/app/test.html',
 									controller : Controller,
 									priority : 200
 								});
@@ -64,8 +59,8 @@ define(
 
 			Configuration.$inject = [ 'ViewsProvider' ];
 
-			ngModule.config(Configuration);
-			ngModule.controller(Controller);
+			pluginModule.config(Configuration);
+			pluginModule.controller(Controller);
 
-			return ngModule;
+			return pluginModule;
 		});

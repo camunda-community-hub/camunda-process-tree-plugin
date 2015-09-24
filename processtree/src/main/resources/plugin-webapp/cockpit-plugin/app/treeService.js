@@ -1,5 +1,15 @@
 define([ 'angular' ], function(angular) {
 
+	var css = "/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/style.css";
+	$.get(css, function(data){
+		// while including the css file we lose the context of the file path, so we need to enrich the includes of the images with absolute url 
+		data = data.replace(/(\(\"32px\.png\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/32px.png")');
+		data = data.replace(/(\(\"40px\.png\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/40px.png")');
+		data = data.replace(/(\(\"throbber\.gif\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/throbber.gif")');
+	    $("<style type=\"text/css\">" + data + "</style>").appendTo(document.head);
+	});
+
+	
 	var treeServiceModule = angular.module('treeService', []);
 
 	treeServiceModule.factory('treeService', ['camAPI','$q',function(camAPI,$q) {
@@ -31,27 +41,35 @@ define([ 'angular' ], function(angular) {
 						var topInstance;
 						
 						promise.then(
+								
+								//diese verschachtelten promises sind nicht sehr sauber, man sollte 
+								//es im endeffekt so schreiben können: 
+								// findProcessInstance(id).then(enrichInstanceWithParent).then(findTopParent).then(enrichWithChildren)...
+								// geht das? Stefan kann das sicher, ich habs noch nicht ganz durchschaut...
 								function (succInstance){
-									topInstance = succInstance 
+									console.log("succInstance is: ")
+									console.log(succInstance)
+									topInstance = succInstance
+									
+									console.log("topInstance is: " + topInstance);
 									treeDataToBeFilled = topInstance.id;
 									if (topInstance != null) {
 										console.log('TOP PARENT:');
 										console.log(topInstance);
 										enrichWithChildren(topInstance, treeDataToBeFilled);
 									}
+									
 								},
 								function (error){
+									console.log(error);
 									throw error
 								}
 						);
+
 						
 					}
 				}
 			});
-			
-			//get the processDefinition
-			var ProcessDefinition = camAPI
-			.resource('process-definition');											
 			
 			function enrichWithChildren(instance, node) {
 				var ProcessInstance = camAPI.resource('process-instance');
@@ -78,9 +96,9 @@ define([ 'angular' ], function(angular) {
 				});
 			}
 			
-			function findTopParent(instance) {
+			function findTopParent(instance, parentDeferred) {
 				
-				var deferred = $q.defer();
+				var deferred = parentDeferred || $q.defer();
 				
 				var ProcessInstance = camAPI.resource('process-instance');
 				ProcessInstance.list({subProcessInstance: instance.id}, function(err, res) {
@@ -92,10 +110,12 @@ define([ 'angular' ], function(angular) {
 						if (superInstances.items[0] == null || superInstances.items[0]['id'] == null) {
 							instance['superProcessInstanceId']='#';									
 							enrichInstanceWithParentIfIsIncident(instance);
-							promise.resolve(instance);
+							console.log('resolving...')
+							deferred.resolve(instance);
+							console.log('resolved!')
 						} else {
 							//recursion:
-							var promise = findTopParent(superInstances.items[0]);
+							var promise = findTopParent(superInstances.items[0], deferred);
 							promise.then(
 									function(succInstance){deferred.resolve(succInstance)},
 									function(error){deferred.reject(error)}
@@ -137,10 +157,6 @@ define([ 'angular' ], function(angular) {
 				});
 			}			
 			
-			
-			
-			
-			
 			return [ 'Simple root node', {
 				'id' : 'node_2',
 				'text' : 'Root node with options',
@@ -170,13 +186,12 @@ define([ 'angular' ], function(angular) {
 			scope.treeConfig = {
 				"core" : {
 					"themes" : {
-						"variant" : "large"
+						"variant" : "large", 
+						"icons":false
 					}
-				},
-				"checkbox" : {
-					"keep_selected_style" : false
-				},
-				"plugins" : [ "wholerow" ]
+				}
+			//,
+				//"plugins" : [ "wholerow" ]
 			}
 			
 			scope.readyCB = function() {

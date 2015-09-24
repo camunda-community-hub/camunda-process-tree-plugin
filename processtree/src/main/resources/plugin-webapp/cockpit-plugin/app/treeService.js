@@ -33,18 +33,18 @@ define([ 'angular' ], function(angular) {
 						promise.then(
 								function (succInstance){
 									topInstance = succInstance 
+									treeDataToBeFilled = topInstance.id;
+									if (topInstance != null) {
+										console.log('TOP PARENT:');
+										console.log(topInstance);
+										enrichWithChildren(topInstance, treeDataToBeFilled);
+									}
 								},
 								function (error){
 									throw error
 								}
 						);
 						
-						treeDataToBeFilled = topInstance.id;
-						if (topInstance != null) {
-							console.log('TOP PARENT:');
-							console.log(topInstance);
-							enrichWithChildren(topInstance, treeDataToBeFilled);
-						}
 					}
 				}
 			});

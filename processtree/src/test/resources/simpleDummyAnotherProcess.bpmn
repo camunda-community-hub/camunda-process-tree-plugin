@@ -15,7 +15,7 @@
       <bpmn2:incoming>SequenceFlow_0qglrdc</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0xbq11h</bpmn2:outgoing>
     </bpmn2:userTask>
-    <bpmn2:callActivity id="CallActivity_0gzou4n" name="Call Activity" calledElement="simpleDummyProcess">
+    <bpmn2:callActivity id="CallActivity_0gzou4n" name="Call Activity" calledElement="SecondLevelProcess">
       <bpmn2:incoming>SequenceFlow_0qw2uww</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0yi7bqr</bpmn2:outgoing>
     </bpmn2:callActivity>

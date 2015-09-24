@@ -18,6 +18,8 @@ define([ 'angular' ], function(angular) {
 
 		treeServiceFactory.treeDataByCurrentTask = function(task) {
 
+			var treeDataByCurrentTaskDefer = $q.defer();
+			
 			console.log('Building tree data with task: ' + task);
 			console.log(task);
 
@@ -27,30 +29,30 @@ define([ 'angular' ], function(angular) {
 			//find parent of process instance for current task.
 			ProcessInstance = camAPI.resource('process-instance');
 			
+			var workingObject = [ 'Simple root node HAHA', {
+				'id' : 'node_2',
+				'text' : 'Root node with options',
+				'state' : {
+					'opened' : true,
+					'selected' : true
+				},
+				'children' : [ {
+					'text' : 'Child 1'
+				}, 'Child 2' ]
+			} ];			
+			
+									
 			fillTheTree().then(
 					function(treeData) {
-						return treeData;
+						treeDataByCurrentTaskDefer.resolve(treeData);
 					},
 					function(error) {
-						throw error;
+						treeDataByCurrentTaskDefer.reject(error);
 					}
-			);
-						
-//			return [ 'Simple root node HAHA', {
-//				'id' : 'node_2',
-//				'text' : 'Root node with options',
-//				'state' : {
-//					'opened' : true,
-//					'selected' : true
-//				},
-//				'children' : [ {
-//					'text' : 'Child 1'
-//				}, 'Child 2' ]
-//			} ];
-			
+			);			
 			
 			function fillTheTree() {
-				defered = $q.defer();
+				var fillTheTreeDefer = $q.defer();
 				ProcessInstance.list({processInstanceIds: processInstanceId},function(err,res) {
 					if (err) {
 						throw err;
@@ -70,36 +72,36 @@ define([ 'angular' ], function(angular) {
 									//es im endeffekt so schreiben können: 
 									// findProcessInstance(id).then(enrichInstanceWithParent).then(findTopParent).then(enrichWithChildren)...
 									// geht das? Stefan kann das sicher, ich habs noch nicht ganz durchschaut...
-									function (succInstance){
+									function (succInstance) {
 										topInstance = succInstance										
 										var treeDataToBeFilled = {};
 										treeDataToBeFilled.id = topInstance.id;
-										treeDataToBeFilled.text = "Here is the top "+topInstance.id;
+										treeDataToBeFilled.definitionId = topInstance.definitionId;
+										treeDataToBeFilled.text = topInstance.definitionId;
+										treeDataToBeFilled.state = {'opened' : true, 'selected' : false};
 										if (topInstance != null) {
 											var promise = enrichWithChildren(topInstance, treeDataToBeFilled);
 											
 											promise.then(
 													function (succInstance) {
-														console.log('got the model ready...');
-														console.log(treeDataToBeFilled);
-														defered.resolve(treeDataToBeFilled);
+														fillTheTreeDefer.resolve(treeDataToBeFilled);
 													},
 													function (error) {
 														console.log(error);
-														defered.reject(error);
+														fillTheTreeDefer.reject(error);
 													}
 											);
 										}									
 									},
 									function (error){
 										console.log(error);
-										defered.reject(error);
+										fillTheTreeDefer.reject(error);
 									}
 							);						
 						}
 					}
 				});
-				return defered.promise;
+				return fillTheTreeDefer.promise;
 			}
 			
 			function enrichWithChildren(instance, node, parentDeferred) {
@@ -119,21 +121,48 @@ define([ 'angular' ], function(angular) {
 							for (i=0;i<res.items.length;i++) {
 								var child = {};
 								child.id = res.items[i].id;
-								child.text = "I am child "+child.id;
+								child.text = res.items[i].definitionId;
+								child.definitionId = res.items[i].definitionId;
+								retrieveNameForProcessDefiniton(child.definitionId).then(
+										function(result) {
+											child.name = result; 
+										},
+										function (err) {
+											console.log(err);
+											throw err;
+										}
+								);
+								child.state = {'opened' : true, 'selected' : false};
 								children.push(child);
 							}
 							node.children = children;							
 							for (i=0;i<node.children.length;i++) {
-								var promise = enrichWithChildren(res.items[i],node.children[i], deferred);
-								promise.then(
-										function(succInstance){deferred.resolve(succInstance)},
-										function(error){deferred.reject(error)}
+								enrichWithChildren(res.items[i],node.children[i], deferred).then(
+										function(succInstance){
+											deferred.resolve(succInstance)
+										},
+										function(error){
+											deferred.reject(error)
+										}
 								);
 							}
 						}						
 					}
 				});
 				return deferred.promise;
+			}
+			
+			function retrieveNameForProcessDefiniton(definitionId) {
+				var retriveNameDefer = $q.defer();
+				var ProcessDefinition = camAPI.resource('process-definition');				
+				ProcessDefinition.get(definitionId, function(err,res) {
+					if (err) {
+						retriveNameDefer.reject(err);
+					} else {
+						retriveNameDefer.resolve(res.name);
+					}
+				});
+				return retriveNameDefer.promise;
 			}
 			
 			function findTopParent(instance, parentDeferred) {
@@ -149,10 +178,7 @@ define([ 'angular' ], function(angular) {
 						var superInstances = res;
 						if (superInstances.items[0] == null || superInstances.items[0]['id'] == null) {
 							instance['superProcessInstanceId']='#';									
-							//enrichInstanceWithParentIfIsIncident(instance);
-							console.log('resolving...')
 							deferred.resolve(instance);
-							console.log('resolved!')
 						} else {
 							//recursion:
 							var promise = findTopParent(superInstances.items[0], deferred);
@@ -164,39 +190,8 @@ define([ 'angular' ], function(angular) {
 					}
 				});	
 				return deferred.promise;
-			}									
-			
-//			function enrichInstanceWithParent(instance) {
-//				var ProcessInstance = camAPI.resource('process-instance');								
-//				ProcessInstance.list({subProcessInstance: instance.id}, function(err, res) {
-//					if (err) {
-//						throw err;
-//					} else {
-//						var superInstances = res;
-//						if (superInstances.items[0] == null || superInstances.items[0]['id'] == null) {
-//							instance['superProcessInstanceId']='#';
-//							enrichInstanceWithParentIfIsIncident(instance); 
-//						} else {
-//							instance['superProcessInstanceId']=superInstances.items[0]['id'];										
-//						}
-//					}
-//				});
-//			}
-//						
-//			function enrichInstanceWithParentIfIsIncident(instance) {
-//				var History = camAPI.resource('history');
-//				History.processInstance({name:'incidentProcessInstanceId', operator:'eq', value:instance.id}, function(err,res) {
-//					if (err) {
-//						throw err;
-//					} else {
-//						var variables = res;
-//						if (variables.items[0] != null && variables.items[0]['value'] != null) {
-//							instance['superProcessInstanceId'] = variables.items[0]['value'];
-//						}
-//					}
-//				});
-//			}			
-			
+			}														
+			return treeDataByCurrentTaskDefer.promise;			
 		}
 		return treeServiceFactory;
 	}]);
@@ -209,29 +204,38 @@ define([ 'angular' ], function(angular) {
 			console.log(scope.currentTask); 
 			
 			var currentTaskObject = attrs.currentTask ? scope.$parent.$eval(attrs.currentTask) : {};
-			
-			scope.treeData = treeService.treeDataByCurrentTask(currentTaskObject)
-			
-			scope.treeConfig = {
-				"core" : {
-					"themes" : {
-						"variant" : "large", 
-						"icons":false
-					}
-				}
-			//,
-				//"plugins" : [ "wholerow" ]
-			}
-			
-			scope.readyCB = function() {
-		        console.log('ready called');
-		    };
-		    
-		    scope.selectNodeCB = function(node, selected, event) {
-		    	console.log('selectNodeCB called');
-		    	console.log(node);
-		    	console.log(selected);
-		    };
+						 
+			treeService.treeDataByCurrentTask(currentTaskObject).then(
+						function(succInstance) {
+
+							scope.treeData = succInstance;							
+							
+							scope.treeConfig = {
+									"core" : {
+										"themes" : {
+											"variant" : "large", 
+											"icons":false
+										}
+									}
+								//,
+									//"plugins" : [ "wholerow" ]
+								}
+								
+								scope.readyCB = function() {
+							        console.log('ready called');
+							    };
+							    
+							    scope.selectNodeCB = function(node, selected, event) {
+							    	console.log('selectNodeCB called');
+							    	console.log(node);
+							    	console.log(selected);
+							    };
+
+						},
+						function(error) {
+							throw error;
+						}
+					);						
 		    
 		}
 		

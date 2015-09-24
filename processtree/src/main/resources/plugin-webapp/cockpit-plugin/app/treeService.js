@@ -25,7 +25,7 @@ define([ 'angular' ], function(angular) {
 			var processInstanceId = task.processInstanceId;							
 
 			//find parent of process instance for current task.
-			ProcessInstance = camAPI.resource('process-instance');
+			HistoryService = camAPI.resource('history');
 			
 			fillTheTree().then(
 					function(treeData) {
@@ -51,12 +51,12 @@ define([ 'angular' ], function(angular) {
 			
 			function fillTheTree() {
 				defered = $q.defer();
-				ProcessInstance.list({processInstanceIds: processInstanceId},function(err,res) {
+				HistoryService.processInstance({processInstanceId: processInstanceId},function(err,res) {
 					if (err) {
 						throw err;
 					} else {
-						if (res.items[0] != null) {
-							var instance = res.items[0];
+						if (res[0] != null) {
+							var instance = res[0];
 							//enrichInstanceWithParent(instance);
 							var treeDataToBeFilled = {};						
 							
@@ -106,25 +106,25 @@ define([ 'angular' ], function(angular) {
 				
 				var deferred = parentDeferred || $q.defer();
 				
-				var ProcessInstance = camAPI.resource('process-instance');
-				ProcessInstance.list({superProcessInstance: instance.id}, function(err, res) {
+				var HistoryService = camAPI.resource('history');
+				HistoryService.processInstance({superProcessInstanceId: instance.id}, function(err, res) {
 					if (err) {
 						deferred.reject(err);
 					} else {
-						if (res.items.length == 0) {
+						if (res.length == 0) {
 							//exit condition
 							deferred.resolve(instance);
 						} else {
 							var children = [];
-							for (i=0;i<res.items.length;i++) {
+							for (i=0;i<res.length;i++) {
 								var child = {};
-								child.id = res.items[i].id;
+								child.id = res[i].id;
 								child.text = "I am child "+child.id;
 								children.push(child);
 							}
 							node.children = children;							
 							for (i=0;i<node.children.length;i++) {
-								var promise = enrichWithChildren(res.items[i],node.children[i], deferred);
+								var promise = enrichWithChildren(res[i],node.children[i], deferred);
 								promise.then(
 										function(succInstance){deferred.resolve(succInstance)},
 										function(error){deferred.reject(error)}
@@ -140,14 +140,14 @@ define([ 'angular' ], function(angular) {
 				
 				var deferred = parentDeferred || $q.defer();
 				
-				var ProcessInstance = camAPI.resource('process-instance');
-				ProcessInstance.list({subProcessInstance: instance.id}, function(err, res) {
+				var HistoryService = camAPI.resource('history');
+				HistoryService.processInstance({subProcessInstanceId: instance.id}, function(err, res) {
 					if (err) {
 						deferred.reject(err);
 					} else {
 						//exit condition:
 						var superInstances = res;
-						if (superInstances.items[0] == null || superInstances.items[0]['id'] == null) {
+						if (superInstances[0] == null || superInstances[0]['id'] == null) {
 							instance['superProcessInstanceId']='#';									
 							//enrichInstanceWithParentIfIsIncident(instance);
 							console.log('resolving...')
@@ -155,7 +155,7 @@ define([ 'angular' ], function(angular) {
 							console.log('resolved!')
 						} else {
 							//recursion:
-							var promise = findTopParent(superInstances.items[0], deferred);
+							var promise = findTopParent(superInstances[0], deferred);
 							promise.then(
 									function(succInstance){deferred.resolve(succInstance)},
 									function(error){deferred.reject(error)}
@@ -168,7 +168,7 @@ define([ 'angular' ], function(angular) {
 			
 //			function enrichInstanceWithParent(instance) {
 //				var ProcessInstance = camAPI.resource('process-instance');								
-//				ProcessInstance.list({subProcessInstance: instance.id}, function(err, res) {
+//				HistoryService.processInstance({subProcessInstance: instance.id}, function(err, res) {
 //					if (err) {
 //						throw err;
 //					} else {

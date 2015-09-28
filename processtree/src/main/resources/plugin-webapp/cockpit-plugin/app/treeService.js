@@ -25,6 +25,7 @@ define([ 'angular' ], function(angular) {
 
 			//find parent of process instance for current task.
 			HistoryService = camAPI.resource('history');
+			ProcessDefinition = camAPI.resource("process-definition");
 			
 			var workingObject = [ 'Simple root node HAHA', {
 				'id' : 'node_2',
@@ -193,10 +194,25 @@ define([ 'angular' ], function(angular) {
 								}
 															    
 							    scope.selectNodeCB = function(node, selected, event) {
-							    	console.log('selectNodeCB called');
-							    	console.log(node);
-							    	console.log(selected);
-							    };
+							    
+								ProcessDefinition.get(selected.node.original.definitionId, 
+                             		   function (err, res) {
+                       			   
+                             	   if(err) {
+                             		   throw err;
+                             	   } else {
+                             		   if(res != null) {
+                             			   
+                             			   scope.$parent.processDefinition = res;
+                             			   
+                             		   }
+                             		   
+                             	   }
+                             	   
+                                });
+								
+
+							};
 
 						},
 						function(error) {

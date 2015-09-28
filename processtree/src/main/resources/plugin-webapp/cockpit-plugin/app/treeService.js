@@ -174,52 +174,71 @@ define([ 'angular' ], function(angular) {
 	treeServiceModule.directive('processTree', ['treeService', function(treeService) {
 		
 		function link(scope, element, attrs) {
+
+			var fillTreeByCurrentTask = function(currentTaskObject) {
 			
-			var currentTaskObject = attrs.currentTask ? scope.$parent.$eval(attrs.currentTask) : {};
 						 
 			treeService.treeDataByCurrentTask(currentTaskObject).then(
 						function(succInstance) {
-
 							scope.treeData = succInstance;							
-							
-							scope.treeConfig = {
-									"core" : {
-										"themes" : {
-											"variant" : "large", 
-											"icons":false
-										}
-									}
-								//,
-									//"plugins" : [ "wholerow" ]
-								}
-															    
-							    scope.selectNodeCB = function(node, selected, event) {
-							    
-								ProcessDefinition.get(selected.node.original.definitionId, 
-                             		   function (err, res) {
-                       			   
-                             	   if(err) {
-                             		   throw err;
-                             	   } else {
-                             		   if(res != null) {
-                             			   
-                             			   scope.$parent.processDefinition = res;
-                             			   
-                             		   }
-                             		   
-                             	   }
-                             	   
-                                });
-								
-
-							};
+							scope.treeConfig.version++;
 
 						},
 						function(error) {
 							throw error;
 						}
-					);						
+					);	
+			}
 		    
+			
+			scope.$watch('currentTask', function(newValue, oldValue) {
+		          if (newValue !== oldValue) {
+		        	  console.log(newValue);
+		        	  fillTreeByCurrentTask(newValue);
+		          }
+		      }, true);
+			
+			
+			scope.treeConfig = {
+					"core" : {
+						"themes" : {
+							"variant" : "large", 
+							"icons":false
+						}
+					}, 
+					version : 1
+				//,
+					//"plugins" : [ "wholerow" ]
+				}
+								
+			
+			    scope.selectNodeCB = function(node, selected, event) {
+			    
+				ProcessDefinition.get(selected.node.original.definitionId, 
+             		   function (err, res) {
+       			   
+             	   if(err) {
+             		   throw err;
+             	   } else {
+             		   if(res != null) {
+             			   
+             			   scope.$parent.processDefinition = res;
+             			   
+             		   }
+             		   
+             	   }
+             	   
+                });
+				
+
+			};
+
+
+			
+			
+			var currentTaskObject = attrs.currentTask ? scope.$parent.$eval(attrs.currentTask) : {};
+			fillTreeByCurrentTask(currentTaskObject);
+			
 		}
 		
 		return {

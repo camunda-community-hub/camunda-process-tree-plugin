@@ -70,7 +70,7 @@ define([ 'angular' ], function(angular) {
 										treeDataToBeFilled.text = topInstance.processDefinitionKey;
 										
 										var selected = topInstance.id == currentProcessInstanceId;
-										var styleClass = (topInstance.endTime != null ? 'active' : 'ended');										
+										var styleClass = (topInstance.endTime == null ? 'processOngoing' : 'processFinished');	
 										treeDataToBeFilled.li_attr = {'class' : styleClass};
 										treeDataToBeFilled.state = {'opened' : true, 'selected' : selected};
 										
@@ -117,9 +117,10 @@ define([ 'angular' ], function(angular) {
 								child.id = res[i].id;
 								child.text = res[i].processDefinitionKey;
 								child.definitionId = res[i].processDefinitionId;
+								child.endTime = res[i].endTime;
 								var selected = child.id == currentProcessInstanceId;
 								child.state = {'opened' : true, 'selected' : selected};
-								var styleClass = (child.endTime != null ? 'active' : 'ended');
+								var styleClass = (child.endTime == null ? 'processOngoing' : 'processFinished');
 								child.li_attr = {'class' : styleClass};
 								children.push(child);
 							}
@@ -175,52 +176,68 @@ define([ 'angular' ], function(angular) {
 		
 		function link(scope, element, attrs) {
 			
-			var currentTaskObject = attrs.currentTask ? scope.$parent.$eval(attrs.currentTask) : {};
+			scope.selectNodeCB = function(node, selected, event) {
+				
+				ProcessDefinition.get(selected.node.original.definitionId, 
+						function (err, res) {
+					
+					if(err) {
+						throw err;
+					} else {
+						if(res != null) {
+							
+							scope.$parent.processDefinition = res;
+							
+						}
+					}
+					
+				});
+				
+				var selectedProcessInstanceId = selected.selected[0];
+				scope.$parent.processInstanceId = selectedProcessInstanceId;								
+				
+			};
+			
+			var fillTreeByCurrentTask = function(currentTaskObject) {
+			
 						 
 			treeService.treeDataByCurrentTask(currentTaskObject).then(
 						function(succInstance) {
-
 							scope.treeData = succInstance;							
-							
-							scope.treeConfig = {
-									"core" : {
-										"themes" : {
-											"variant" : "large", 
-											"icons":false
-										}
-									}
-								//,
-									//"plugins" : [ "wholerow" ]
-								}
-															    
-							    scope.selectNodeCB = function(node, selected, event) {
-							    
-								ProcessDefinition.get(selected.node.original.definitionId, 
-                             		   function (err, res) {
-                       			   
-                             	   if(err) {
-                             		   throw err;
-                             	   } else {
-                             		   if(res != null) {
-                             			   
-                             			   scope.$parent.processDefinition = res;
-                             			   
-                             		   }
-                             	   }
-                             	   
-								});
-							
-								var selectedProcessInstanceId = selected.selected[0];
-								scope.$parent.processInstanceId = selectedProcessInstanceId;								
+							scope.treeConfig.version++;
 
-							};
 						},
-							
 						function(error) {
 							throw error;
-						})
+						}
+					);	
+			}
+		    
+			
+			scope.$watch('currentTask', function(newValue, oldValue) {
+		          if (newValue !== oldValue) {
+		        	  console.log(newValue);
+		        	  fillTreeByCurrentTask(newValue);
+		          }
+		      }, true);
+
+							
+			scope.treeConfig = {
+				"core" : {
+						"themes" : {
+						"variant" : "large", 
+						"icons":false
+						}
+				}, 
+				version : 1
+								//,
+									//"plugins" : [ "wholerow" ]
+			}
+															    
+			var currentTaskObject = attrs.currentTask ? scope.$parent.$eval(attrs.currentTask) : {};
+			fillTreeByCurrentTask(currentTaskObject);
 		};
-		
+					
 		return {
 			scope: {
 				currentTask: '=',

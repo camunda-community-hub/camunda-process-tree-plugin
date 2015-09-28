@@ -69,7 +69,7 @@ define([ 'angular' ], function(angular) {
 										treeDataToBeFilled.text = topInstance.processDefinitionKey;
 										
 										var selected = topInstance.id == currentProcessInstanceId;
-										var styleClass = (topInstance.endTime != null ? 'active' : 'ended');										
+										var styleClass = (topInstance.endTime == null ? 'running' : 'ended');	
 										treeDataToBeFilled.li_attr = {'class' : styleClass};
 										treeDataToBeFilled.state = {'opened' : true, 'selected' : selected};
 										
@@ -116,9 +116,10 @@ define([ 'angular' ], function(angular) {
 								child.id = res[i].id;
 								child.text = res[i].processDefinitionKey;
 								child.definitionId = res[i].processDefinitionId;
+								console.log(res);
 								var selected = child.id == currentProcessInstanceId;
 								child.state = {'opened' : true, 'selected' : selected};
-								var styleClass = (child.endTime != null ? 'active' : 'ended');
+								var styleClass = (child.endTime == null ? 'running' : 'ended');
 								child.li_attr = {'class' : styleClass};
 								children.push(child);
 							}

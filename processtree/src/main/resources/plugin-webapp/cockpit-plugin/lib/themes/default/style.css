@@ -8,6 +8,50 @@
   list-style-type: none;
   list-style-image: none;
 }
+
+.processFinished a {
+  -webkit-box-shadow: 0px 0px 35px 5px rgba(135, 206, 250, 1) !important; /* WebKit */
+  -moz-box-shadow: 0px 0px 35px 5px rgba(135, 206, 250, 1) !important; /* Firefox */
+  box-shadow: 2px 2px 4px 1px rgba(135, 206, 250, 1) !important; /* Standard */
+  border-radius: 2px; 
+ }
+  
+/* jsTree node - process highlight */
+.processOngoing a {
+  -webkit-box-shadow: 0px 0px 35px 5px rgba(85, 255, 13, 1); /* WebKit */
+  -moz-box-shadow: 0px 0px 35px 5px rgba(85, 255, 13, 1); /* Firefox */
+  box-shadow: 2px 2px 4px 1px rgba(85, 255, 13, 1); /* Standard */
+  border-radius: 2px;
+}
+
+/* jsTree node - process error highlight */
+.processError a {
+  -webkit-box-shadow: 0px 0px 35px 5px rgba(249, 12, 12, 0.8) !important; /* WebKit */
+  -moz-box-shadow: 0px 0px 35px 5px rgba(249, 12, 12, 0.8) !important; /* Firefox */
+  box-shadow: 2px 2px 4px 1px rgba(249, 12, 12, 0.8) !important; /* Standard */
+  border-radius: 2px;
+}
+
+/* possible conflict with declaration of .jstree-default .jstree-clicked  */
+.processFinished .jstree-clicked  {
+  background: rgba(135, 206, 250, 0.3) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+.processOngoing .jstree-clicked  {
+  background: rgba(85, 255, 13, 0.3);
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+.processError .jstree-clicked  {
+  background: rgba(249, 12, 12, 0.3) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+  
+
+
+
 .jstree-node {
   white-space: nowrap;
 }
@@ -694,7 +738,7 @@
 }
 .jstree-default-large .jstree-node {
   min-height: 32px;
-  line-height: 32px;
+  line-height: 40px;
   margin-left: 32px;
   min-width: 32px;
 }

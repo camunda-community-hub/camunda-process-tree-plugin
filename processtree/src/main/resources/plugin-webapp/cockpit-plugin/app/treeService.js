@@ -18,17 +18,8 @@ define([ 'angular' ], function(angular) {
 
         treeServiceFactory.treeDataByCurrentTask = function(task) {
 
-            var treeDataByCurrentTaskDefer = $q.defer();
             var currentProcessInstanceId = task.processInstanceId;
-
-            // find parent of process instance for current task.
             HistoryService = camAPI.resource('history');
-
-            fillTheTree().then(function(treeData) {
-                treeDataByCurrentTaskDefer.resolve(treeData);
-            }, function(error) {
-                treeDataByCurrentTaskDefer.reject(error);
-            });
 
             var findProcessInstanceById = function(currentProcessInstanceId) {
 
@@ -38,11 +29,9 @@ define([ 'angular' ], function(angular) {
                 }, function(err, res) {
                     if (err) {
                         throw err;
-                    } else {
-                        if (res[0]) {
-                            var instance = res[0];
-                            findProcessInstanceDefer.resolve(instance);
-                        }
+                    }
+                    if (res[0]) {
+                        findProcessInstanceDefer.resolve(res[0]);
                     }
                 });
                 return findProcessInstanceDefer.promise;
@@ -76,92 +65,45 @@ define([ 'angular' ], function(angular) {
                 return findTopParentDefered.promise;
             };
 
-            var xxx = function(topInstance) {
+            var buildTreeDataByInstance = function(instance) {
 
-                console.log("--------------------------");
-                console.log(topInstance);
-                console.log("--------------------------");
-                // var treeDataToBeFilled = {};
-                // treeDataToBeFilled.id = topInstance.id;
-                // treeDataToBeFilled.definitionId =
-                // topInstance.processDefinitionId;
-                // treeDataToBeFilled.text = topInstance.processDefinitionKey;
-                //
-                // var selected = topInstance.id == currentProcessInstanceId;
-                // var styleClass = (topInstance.endTime == null ?
-                // 'processOngoing' : 'processFinished');
-                // treeDataToBeFilled.li_attr = {
-                // 'class' : styleClass
-                // };
-                // treeDataToBeFilled.state = {
-                // 'opened' : true,
-                // 'selected' : selected
-                // };
-                //
-                // if (topInstance != null) {
-                // enrichWithChildren(topInstance,
-                // treeDataToBeFilled).then(function(succInstance) {
-                // fillTheTreeDefer.resolve(treeDataToBeFilled);
-                // }, function(error) {
-                // console.log(error);
-                // fillTheTreeDefer.reject(error);
-                // });
-                // }
-                //                
-            }
+                var treeData = {};
+                treeData.id = instance.id;
+                treeData.definitionId = instance.processDefinitionId;
+                treeData.text = instance.processDefinitionKey;
 
-            findProcessInstanceById(currentProcessInstanceId)//
-            .then(findTopParentInstance)//
-            .then(xxx);
+                var selected = instance.id === currentProcessInstanceId;
+                var styleClass = (!instance.endTime ? 'processOngoing' : 'processFinished');
+                treeData.li_attr = {
+                    'class' : styleClass
+                };
+                treeData.state = {
+                    'opened' : true,
+                    'selected' : selected
+                };
 
-            function fillTheTree() {
+                return treeData;
+            };
+
+            var enrichParentInstanceWithChildren = function(topInstance) {
+
                 var fillTheTreeDefer = $q.defer();
-                HistoryService.processInstance({
-                    processInstanceId : currentProcessInstanceId
-                }, function(err, res) {
-                    if (err) {
-                        throw err;
-                    } else {
-                        if (res[0] != null) {
-                            var instance = res[0];
-                            var treeDataToBeFilled = {};
 
-                            findTopParent(instance).then(function(succInstance) {
-                                var topInstance = succInstance
-                                var treeDataToBeFilled = {};
-                                treeDataToBeFilled.id = topInstance.id;
-                                treeDataToBeFilled.definitionId = topInstance.processDefinitionId;
-                                treeDataToBeFilled.text = topInstance.processDefinitionKey;
+                if (topInstance) {
+                    var treeDataToBeFilled = buildTreeDataByInstance(topInstance);
 
-                                var selected = topInstance.id == currentProcessInstanceId;
-                                var styleClass = (topInstance.endTime == null ? 'processOngoing' : 'processFinished');
-                                treeDataToBeFilled.li_attr = {
-                                    'class' : styleClass
-                                };
-                                treeDataToBeFilled.state = {
-                                    'opened' : true,
-                                    'selected' : selected
-                                };
+                    enrichWithChildren(topInstance, treeDataToBeFilled).then(function(succInstance) {
+                        fillTheTreeDefer.resolve(treeDataToBeFilled);
+                    }, function(error) {
+                        console.log(error);
+                        fillTheTreeDefer.reject(error);
+                    });
+                }
 
-                                if (topInstance != null) {
-                                    enrichWithChildren(topInstance, treeDataToBeFilled).then(function(succInstance) {
-                                        fillTheTreeDefer.resolve(treeDataToBeFilled);
-                                    }, function(error) {
-                                        console.log(error);
-                                        fillTheTreeDefer.reject(error);
-                                    });
-                                }
-                            }, function(error) {
-                                console.log(error);
-                                fillTheTreeDefer.reject(error);
-                            });
-                        }
-                    }
-                });
                 return fillTheTreeDefer.promise;
-            }
+            };
 
-            function enrichWithChildren(instance, node, parentDeferred) {
+            var enrichWithChildren = function(instance, node, parentDeferred) {
 
                 var enrichWithChildrenDeferred = parentDeferred || $q.defer();
 
@@ -171,27 +113,13 @@ define([ 'angular' ], function(angular) {
                     if (err) {
                         enrichWithChildrenDeferred.reject(err);
                     } else {
-                        if (res.length == 0) {
+                        if (res.length === 0) {
                             // exit condition
                             enrichWithChildrenDeferred.resolve(instance);
                         } else {
                             var children = [];
                             for (i = 0; i < res.length; i++) {
-                                var child = {};
-                                child.id = res[i].id;
-                                child.text = res[i].processDefinitionKey;
-                                child.definitionId = res[i].processDefinitionId;
-                                child.endTime = res[i].endTime;
-                                var selected = child.id == currentProcessInstanceId;
-                                child.state = {
-                                    'opened' : true,
-                                    'selected' : selected
-                                };
-                                var styleClass = (child.endTime == null ? 'processOngoing' : 'processFinished');
-                                child.li_attr = {
-                                    'class' : styleClass
-                                };
-                                children.push(child);
+                                children.push(buildTreeDataByInstance(res[i]));
                             }
                             node.children = children;
 
@@ -202,44 +130,27 @@ define([ 'angular' ], function(angular) {
                                 childrenDeferred[i] = enrichWithChildren(res[i], node.children[i], childDeferred);
                             }
                             $q.all(childrenDeferred).then(function() {
-                                enrichWithChildrenDeferred.resolve(instance)
+                                enrichWithChildrenDeferred.resolve(instance);
                             });
                         }
                     }
                 });
                 return enrichWithChildrenDeferred.promise;
-            }
+            };
 
-            function findTopParent(instance, parentDeferred) {
+            var treeDataByCurrentTaskDefer = $q.defer();
 
-                var findTopParentDefered = parentDeferred || $q.defer();
-
-                HistoryService.processInstance({
-                    subProcessInstanceId : instance.id
-                }, function(err, res) {
-                    if (err) {
-                        findTopParentDefered.reject(err);
-                    } else {
-                        // exit condition:
-                        var superInstances = res;
-                        if (superInstances[0] == null || superInstances[0]['id'] == null) {
-                            instance['superProcessInstanceId'] = '#';
-                            findTopParentDefered.resolve(instance);
-                        } else {
-                            // recursion:
-                            findTopParent(superInstances[0], findTopParentDefered).then(function(succInstance) {
-                                findTopParentDefered.resolve(succInstance)
-                            }, function(error) {
-                                deferred.findTopParentDefered(error)
-                            });
-                        }
-                    }
-                });
-                return findTopParentDefered.promise;
-            }
+            findProcessInstanceById(currentProcessInstanceId)//
+            .then(findTopParentInstance)//
+            .then(enrichParentInstanceWithChildren)//
+            .then(function(treeData) {
+                treeDataByCurrentTaskDefer.resolve(treeData);
+            }, function(error) {
+                treeDataByCurrentTaskDefer.reject(error);
+            });
 
             return treeDataByCurrentTaskDefer.promise;
-        }
+        };
         return treeServiceFactory;
     } ]);
 
@@ -247,43 +158,36 @@ define([ 'angular' ], function(angular) {
 
         function link(scope, element, attrs) {
 
-			scope.selectNodeCB = function(node, selected, event) {
-				
+            scope.selectNodeCB = function(node, selected, event) {
+
                 var ProcessDefinition = camAPI.resource("process-definition");
-				ProcessDefinition.get(selected.node.original.definitionId, 
-						function (err, res) {
-					
-					if(err) {
-						throw err;
-					} else {
-						if(res != null) {
-							
-							scope.$parent.processDefinition = res;
-							
-						}
-					}
-					
-				});
-				
-				var selectedProcessInstanceId = selected.selected[0];
-				scope.$parent.processInstanceId = selectedProcessInstanceId;								
-				
-			};
-			
+                ProcessDefinition.get(selected.node.original.definitionId, function(err, res) {
+
+                    if (err) {
+                        throw err;
+                    } else {
+                        if (res) {
+                            scope.$parent.processDefinition = res;
+                        }
+                    }
+                });
+
+                var selectedProcessInstanceId = selected.selected[0];
+                scope.$parent.processInstanceId = selectedProcessInstanceId;
+            };
+
             var fillTreeByCurrentTask = function(currentTaskObject) {
 
                 treeService.treeDataByCurrentTask(currentTaskObject).then(function(succInstance) {
                     scope.treeData = succInstance;
                     scope.treeConfig.version++;
-
                 }, function(error) {
                     throw error;
                 });
-            }
+            };
 
             scope.$watch('currentTask', function(newValue, oldValue) {
                 if (newValue !== oldValue) {
-                    console.log(newValue);
                     fillTreeByCurrentTask(newValue);
                 }
             }, true);
@@ -296,7 +200,7 @@ define([ 'angular' ], function(angular) {
                     }
                 },
                 version : 1
-            }
+            };
 
             var currentTaskObject = attrs.currentTask ? scope.$parent.$eval(attrs.currentTask) : {};
             fillTreeByCurrentTask(currentTaskObject);
@@ -309,6 +213,6 @@ define([ 'angular' ], function(angular) {
             },
             link : link,
             templateUrl : '/camunda/api/tasklist/plugin/process-tree-plugin/static/app/treeService.html'
-        }
+        };
     } ]);
 });

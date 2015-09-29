@@ -165,8 +165,7 @@ define([ 'angular' ], function(angular) {
 				});	
 				return findTopParentDefered.promise;
 			}
-			
-			
+						
 			return treeDataByCurrentTaskDefer.promise;			
 		}
 		return treeServiceFactory;

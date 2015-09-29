@@ -247,6 +247,29 @@ define([ 'angular' ], function(angular) {
 
         function link(scope, element, attrs) {
 
+			scope.selectNodeCB = function(node, selected, event) {
+				
+                var ProcessDefinition = camAPI.resource("process-definition");
+				ProcessDefinition.get(selected.node.original.definitionId, 
+						function (err, res) {
+					
+					if(err) {
+						throw err;
+					} else {
+						if(res != null) {
+							
+							scope.$parent.processDefinition = res;
+							
+						}
+					}
+					
+				});
+				
+				var selectedProcessInstanceId = selected.selected[0];
+				scope.$parent.processInstanceId = selectedProcessInstanceId;								
+				
+			};
+			
             var fillTreeByCurrentTask = function(currentTaskObject) {
 
                 treeService.treeDataByCurrentTask(currentTaskObject).then(function(succInstance) {
@@ -274,26 +297,6 @@ define([ 'angular' ], function(angular) {
                 },
                 version : 1
             }
-
-            scope.selectNodeCB = function(node, selected, event) {
-
-                ProcessDefinition = camAPI.resource("process-definition");
-                ProcessDefinition.get(selected.node.original.definitionId, function(err, res) {
-
-                    if (err) {
-                        throw err;
-                    } else {
-                        if (res != null) {
-
-                            scope.$parent.processDefinition = res;
-
-                        }
-
-                    }
-
-                });
-
-            };
 
             var currentTaskObject = attrs.currentTask ? scope.$parent.$eval(attrs.currentTask) : {};
             fillTreeByCurrentTask(currentTaskObject);

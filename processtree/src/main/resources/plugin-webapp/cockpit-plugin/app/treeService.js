@@ -1,4 +1,4 @@
-define([ 'angular' ], function(angular) {
+define([ ], function() {
 
     var css = '/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/style.css';
     $.get(css, function(data) {

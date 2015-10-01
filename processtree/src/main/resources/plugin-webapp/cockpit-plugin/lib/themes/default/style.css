@@ -49,6 +49,51 @@
   box-shadow: inset 1px 1px 2px #999999;
 }
   
+[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-finished .djs-outline {
+    fill: rgba(135, 206, 250, 1) !important;
+    border-radius: 2px;
+    box-shadow: inset 1px 1px 2px #999999;
+    
+}
+[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-finished .djs-visual > *:nth-child(1) {
+  fill: rgba(135, 206, 250, 1) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+
+.diagram-holder .highlight-task-finished .djs-outline {
+  fill: rgba(135, 206, 250, 1) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+.diagram-holder .highlight-task-finished .djs-visual > *:nth-child(1) {
+  fill: rgba(135, 206, 250, 1) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+ 
+[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-running .djs-outline {
+  fill: rgba(85, 255, 13, 1) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
+  fill: rgba(85, 255, 13, 1) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+
+.diagram-holder .highlight-task-running .djs-outline {
+  fill: rgba(85, 255, 13, 1) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+.diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
+  fill: rgba(85, 255, 13, 1) !important;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px #999999;
+}
+  
 
 
 
@@ -1071,29 +1116,7 @@
   .jstree-default-responsive > .jstree-container-ul > .jstree-node {
     margin-left: 0;
     margin-right: 0;
-  }
-  
-  
-  
-	[cam-widget-bpmn-viewer] .diagram-holder .highlight-blue .djs-outline {
-	    fill: #0000FF !important;
-	    stroke: #0000FF !important;
-	    stroke-width: 2px !important;
-	}
-	[cam-widget-bpmn-viewer] .diagram-holder .highlight-blue .djs-visual > *:nth-child(1) {
-	    fill: #0000FF !important;
-	}
-	
-	.diagram-holder .highlight-blue .djs-outline {
-	    fill: #0000FF !important;
-	    stroke: #84e134 !important;
-	    stroke-width: 2px !important;
-	}
-	.diagram-holder .highlight-blue .djs-visual > *:nth-child(1) {
-	    fill: #0000FF !important;
-	}
-  
-  
+  }   
   
   
   

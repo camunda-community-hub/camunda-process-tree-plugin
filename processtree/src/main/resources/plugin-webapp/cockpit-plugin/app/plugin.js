@@ -135,20 +135,20 @@ define(
 												running = true;
 											}
 
-											var color = 'blue';
+											var taskStatus = 'task-finished';
 											if (running) {
-												color = 'green';
+												taskStatus = 'task-running';
 											}											
 
 											if ($.inArray(entry.activityType, ignoredElementTypes) == -1) {
 
 												//$scope.control.highlight(entry.activityId);
 												var canvas = $scope.control.getViewer().get('canvas');
-												canvas.addMarker(entry.activityId, 'highlight-blue');
+												canvas.addMarker(entry.activityId, 'highlight-'+taskStatus);
 																																					
-												$scope.control.createBadge(
-														entry.activityId,
-														{html: '<svg height="30" width="30"><circle cx="13" cy="13" r="10" stroke="black" stroke-width="3" fill="'+color+'" /></svg>'});																							
+//												$scope.control.createBadge(
+//														entry.activityId,
+//														{html: '<svg height="30" width="30"><circle cx="13" cy="13" r="10" stroke="black" stroke-width="3" fill="'+color+'" /></svg>'});																							
 												
 											}
 											

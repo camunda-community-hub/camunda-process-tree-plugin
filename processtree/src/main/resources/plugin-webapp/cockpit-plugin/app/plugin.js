@@ -7,6 +7,13 @@ define(
 				'/camunda/api/tasklist/plugin/process-tree-plugin/static/app/treeService.js' ],
 
 		function(angular, $, jstree, ngJsTree, treeService) {
+			
+		    var css = '/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/user-styles.css';
+		    $.get(css, function(data) {
+		        // while including the css file we lose the context of the file path, so
+		        // we need to enrich the includes of the images with absolute url
+		        $("<style type=\"text/css\">" + data + "</style>").appendTo(document.head);
+		    });
 
 			var pluginModule = angular.module(
 					'tasklist.plugin.process-tree-plugin', [ 'ngJsTree',
@@ -137,7 +144,7 @@ define(
 
 												//$scope.control.highlight(entry.activityId);
 												var canvas = $scope.control.getViewer().get('canvas');
-												canvas.addMarker(entry.activityId, 'djs-outline');
+												canvas.addMarker(entry.activityId, 'highlight-blue');
 																																					
 												$scope.control.createBadge(
 														entry.activityId,

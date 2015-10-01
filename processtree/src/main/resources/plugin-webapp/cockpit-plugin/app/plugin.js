@@ -117,13 +117,20 @@ define(
 					                           }
 					                     });
 										
+										// Element types ignored during marking
+										var ignoredElementTypes = ["multiInstanceBody"];
+										
 										var running = false;
 										activities.forEach(function(entry) {
+											
+											if ($.inArray(entry.activityType, ignoredElementTypes) == -1) {
 
-											$scope.control.highlight(entry.activityId);
+												$scope.control.highlight(entry.activityId);
+												
+											}
 											
 											// If an element with no end time is present, the instance is still running.
-											if (!entry.endTime) {
+												if (!entry.endTime) {
 												running = true;
 											}
 										});
@@ -131,9 +138,15 @@ define(
 										// Only running instances should have a badge. (current blocking activity)
 										if (running) {
 											
-											$scope.control.createBadge(
-													activities[activities.length - 1].activityId,
-													{html: '<svg height="30" width="30"><circle cx="13" cy="13" r="10" stroke="black" stroke-width="3" fill="green" /></svg>'});
+											var lastActivity = activities[activities.length - 1];
+											
+											if ($.inArray(lastActivity.activityType, ignoredElementTypes) == -1) {
+												
+												$scope.control.createBadge(
+														activities[activities.length - 1].activityId,
+														{html: '<svg height="30" width="30"><circle cx="13" cy="13" r="10" stroke="black" stroke-width="3" fill="green" /></svg>'});
+												
+											}
 											
 										}
 									});

@@ -104,6 +104,60 @@
           </tasks>
         </configuration>
       </plugin>
+      
+      <plugin>
+        <groupId>com.github.klieber</groupId>
+        <artifactId>phantomjs-maven-plugin</artifactId>
+        <version>0.7</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>install</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <version>1.9.7</version>
+        </configuration>
+      </plugin>
+		<plugin>
+			<groupId>com.github.searls</groupId>
+			<artifactId>jasmine-maven-plugin</artifactId>
+			<version>2.0</version>
+			<executions>
+				<execution>
+					<goals>
+						<goal>test</goal>
+					</goals>
+				</execution>
+			</executions>
+			<configuration>
+				<jsSrcDir>src/main/resources/plugin-webapp/cockpit-plugin/app</jsSrcDir>
+				<jsTestSrcDir>src/test/resources/jasmine</jsTestSrcDir>
+              <webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
+              <preloadSources>
+					<source>src/test/resources/test-lib/require.js</source>
+					<source>src/test/resources/test-lib/angular.js</source>
+					<source>src/test/resources/test-lib/angular-mocks.js</source>
+					<!-- source>src/test/resources/test-lib/ngMock.js</source -->
+				</preloadSources>
+              <webDriverCapabilities>
+                <capability>
+                  <name>phantomjs.binary.path</name>
+                  <value>${phantomjs.binary}</value>
+                </capability>
+              </webDriverCapabilities>
+              <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
+              <customRunnerConfiguration>src/test/resources/customConfig.txt</customRunnerConfiguration>
+            </configuration>
+			
+			<!-- configuration>
+
+				
+				<haltOnFailure>true</haltOnFailure>
+			</configuration -->
+		</plugin>
+      
     </plugins>
   </build>
 </project>

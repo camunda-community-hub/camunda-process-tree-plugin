@@ -1,0 +1,17 @@
+
+[cam-widget-bpmn-viewer] .diagram-holder .highlight-blue .djs-outline {
+    fill: #0000ff !important;
+    stroke: #0000ff !important;
+    stroke-width: 2px !important;
+}
+[cam-widget-bpmn-viewer] .diagram-holder .highlight-blue .djs-visual > *:nth-child(1) {
+    fill: #0000ff !important;
+}
+.diagram-holder .highlight-blue .djs-outline {
+    fill: #0000ff !important;
+    stroke: #84e134 !important;
+    stroke-width: 2px !important;
+}
+.diagram-holder .highlight-blue .djs-visual > *:nth-child(1) {
+    fill: #0000ff !important;
+}

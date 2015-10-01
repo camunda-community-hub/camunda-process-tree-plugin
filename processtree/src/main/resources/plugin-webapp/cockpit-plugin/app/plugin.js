@@ -7,7 +7,7 @@ define(
 				'/camunda/api/tasklist/plugin/process-tree-plugin/static/app/treeService.js' ],
 
 		function(angular, $, jstree, ngJsTree, treeService) {
-
+			
 			var pluginModule = angular.module(
 					'tasklist.plugin.process-tree-plugin', [ 'ngJsTree',
 							'treeService' ]);
@@ -137,7 +137,7 @@ define(
 
 												//$scope.control.highlight(entry.activityId);
 												var canvas = $scope.control.getViewer().get('canvas');
-												canvas.addMarker(entry.activityId, 'djs-outline');
+												canvas.addMarker(entry.activityId, 'highlight-blue');
 																																					
 												$scope.control.createBadge(
 														entry.activityId,

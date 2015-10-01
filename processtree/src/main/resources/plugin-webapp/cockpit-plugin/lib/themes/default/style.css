@@ -1072,4 +1072,29 @@
     margin-left: 0;
     margin-right: 0;
   }
+  
+  
+  
+	[cam-widget-bpmn-viewer] .diagram-holder .highlight-blue .djs-outline {
+	    fill: #0000FF !important;
+	    stroke: #0000FF !important;
+	    stroke-width: 2px !important;
+	}
+	[cam-widget-bpmn-viewer] .diagram-holder .highlight-blue .djs-visual > *:nth-child(1) {
+	    fill: #0000FF !important;
+	}
+	
+	.diagram-holder .highlight-blue .djs-outline {
+	    fill: #0000FF !important;
+	    stroke: #84e134 !important;
+	    stroke-width: 2px !important;
+	}
+	.diagram-holder .highlight-blue .djs-visual > *:nth-child(1) {
+	    fill: #0000FF !important;
+	}
+  
+  
+  
+  
+  
 }

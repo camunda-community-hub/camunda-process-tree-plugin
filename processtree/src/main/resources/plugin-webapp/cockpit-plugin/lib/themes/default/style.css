@@ -18,9 +18,9 @@
   
 /* jsTree node - process highlight */
 .processOngoing a {
-  -webkit-box-shadow: 0px 0px 35px 5px rgba(85, 255, 13, 1); /* WebKit */
-  -moz-box-shadow: 0px 0px 35px 5px rgba(85, 255, 13, 1); /* Firefox */
-  box-shadow: 2px 2px 4px 1px rgba(85, 255, 13, 1); /* Standard */
+  -webkit-box-shadow: 0px 0px 35px 5px rgba(85, 255, 13, 1) !important; /* WebKit */
+  -moz-box-shadow: 0px 0px 35px 5px rgba(85, 255, 13, 1) !important; /* Firefox */
+  box-shadow: 2px 2px 4px 1px rgba(85, 255, 13, 1) !important; /* Standard */
   border-radius: 2px;
 }
 
@@ -32,70 +32,17 @@
   border-radius: 2px;
 }
 
-/* possible conflict with declaration of .jstree-default .jstree-clicked  */
-.processFinished .jstree-clicked  {
-  background: rgba(135, 206, 250, 0.3) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
-}
-.processOngoing .jstree-clicked  {
-  background: rgba(85, 255, 13, 0.3);
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
-}
-.processError .jstree-clicked  {
-  background: rgba(249, 12, 12, 0.3) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
-}
-  
-[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-finished .djs-outline {
-    fill: rgba(135, 206, 250, 1) !important;
-    border-radius: 2px;
-    box-shadow: inset 1px 1px 2px #999999;
-    
-}
-[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-finished .djs-visual > *:nth-child(1) {
-  fill: rgba(135, 206, 250, 1) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
-}
-
-.diagram-holder .highlight-task-finished .djs-outline {
-  fill: rgba(135, 206, 250, 1) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
-}
 .diagram-holder .highlight-task-finished .djs-visual > *:nth-child(1) {
   fill: rgba(135, 206, 250, 1) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
 }
  
-[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-running .djs-outline {
+ [cam-widget-bpmn-viewer] .diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
   fill: rgba(85, 255, 13, 1) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
 }
-[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
+ 
+ .diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
   fill: rgba(85, 255, 13, 1) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
 }
-
-.diagram-holder .highlight-task-running .djs-outline {
-  fill: rgba(85, 255, 13, 1) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
-}
-.diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
-  fill: rgba(85, 255, 13, 1) !important;
-  border-radius: 2px;
-  box-shadow: inset 1px 1px 2px #999999;
-}
-  
-
-
 
 .jstree-node {
   white-space: nowrap;

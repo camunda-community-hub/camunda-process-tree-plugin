@@ -90,7 +90,7 @@ define([ ], function() {
             
             var findProcessesWithIncident = function(instance) {
             	var processWithIncidentDefer = $q.defer();   
-            	IncidentService = camAPI.resource('incident');
+            	var IncidentService = camAPI.resource('incident');
             	IncidentService.get({
             		processInstanceId: instance.id
             	}, function(err, res) {

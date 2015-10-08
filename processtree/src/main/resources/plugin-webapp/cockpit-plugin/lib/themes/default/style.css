@@ -26,30 +26,24 @@
 
 /* jsTree node - process error highlight */
 .processError a {
-  -webkit-box-shadow: 0px 0px 35px 5px rgba(249, 12, 12, 0.8) !important; /* WebKit */
-  -moz-box-shadow: 0px 0px 35px 5px rgba(249, 12, 12, 0.8) !important; /* Firefox */
-  box-shadow: 2px 2px 4px 1px rgba(249, 12, 12, 0.8) !important; /* Standard */
+  -webkit-box-shadow: 0px 0px 35px 5px rgba(185, 74, 72, 0.8) !important; /* WebKit */
+  -moz-box-shadow: 0px 0px 35px 5px rgba(185, 74, 72, 0.8) !important; /* Firefox */
+  box-shadow: 2px 2px 4px 1px rgba(185, 74, 72, 0.8) !important; /* Standard */
   border-radius: 2px;
 }
 
-.diagram-holder .highlight-task-error .djs-visual > *:nth-child(1) {
-  fill: rgba(249, 12, 12, 0.8) !important;
-}
- 
- [cam-widget-bpmn-viewer] .diagram-holder .highlight-task-error .djs-visual > *:nth-child(1) {
-  fill: rgba(249, 12, 12, 0.8) !important;
+.diagram-holder .highlight-task-error .djs-visual > *:nth-child(1), 
+[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-error .djs-visual > *:nth-child(1) {
+  fill: rgba(226, 18, 49, 0.75) !important;
 }
 
 .diagram-holder .highlight-task-finished .djs-visual > *:nth-child(1) {
-  fill: rgba(135, 206, 250, 1) !important;
+  fill: rgba(32, 175, 141, 0.2) !important;
 }
  
- [cam-widget-bpmn-viewer] .diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
-  fill: rgba(85, 255, 13, 1) !important;
-}
- 
- .diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
-  fill: rgba(85, 255, 13, 1) !important;
+[cam-widget-bpmn-viewer] .diagram-holder .highlight-task-running .djs-visual > *:nth-child(1), 
+.diagram-holder .highlight-task-running .djs-visual > *:nth-child(1) {
+  fill: rgba(18, 162, 226, 0.65) !important;
 }
 
 .jstree-node {

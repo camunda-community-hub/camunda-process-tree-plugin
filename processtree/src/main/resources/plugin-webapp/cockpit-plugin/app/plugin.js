@@ -139,19 +139,8 @@ function(angular, $, jstree, ngJsTree, treeService) {
                 processInstanceId : $scope.processInstanceId
             }, function(err, res) {
                 if (!err) {
-
                     var incidents = res;
-
-                    console.log(incidents.length);
-
                     incidents.forEach(function(entry) {
-                        console.log(entry);
-                    });
-
-                    console.log("-----");
-
-                    incidents.forEach(function(entry) {
-                        console.log(entry);
                         var canvas = $scope.control.getViewer().get('canvas');
                         canvas.addMarker(entry.activityId, 'highlight-task-error');
                     });

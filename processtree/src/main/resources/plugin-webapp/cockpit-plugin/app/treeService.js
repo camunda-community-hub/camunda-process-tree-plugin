@@ -70,13 +70,10 @@ define([ ], function() {
                 treeData.id = instance.id;
                 treeData.definitionId = instance.processDefinitionId;
                 treeData.text = instance.processDefinitionKey;
-                var selected = instance.id === currentProcessInstanceId;                  
+                var selected = instance.id === currentProcessInstanceId; 
+                
                 var styleClass = (instance.hasIncident ? 'processError' : (!instance.endTime ? 'processOngoing' : 'processFinished'));
-                                  
-                
-                console.log("and the instance is...");
-                console.log(instance);
-                
+                                
                 treeData.li_attr = {
                     'class' : styleClass
                 };
@@ -86,7 +83,6 @@ define([ ], function() {
                 };
                 return treeData;
             };
-
             
             var findProcessesWithIncident = function(instance) {
             	var processWithIncidentDefer = $q.defer();   

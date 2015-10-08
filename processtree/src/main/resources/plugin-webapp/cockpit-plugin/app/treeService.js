@@ -10,16 +10,6 @@ define([ ], function() {
         $("<style type=\"text/css\">" + data + "</style>").appendTo(document.head);
     });
 
-//    var css = '/camunda/app/tasklist/tasklist/user-style.css';
-//    $.get(css, function(data) {
-//        // while including the css file we lose the context of the file path, so
-//        // we need to enrich the includes of the images with absolute url
-//        data = data.replace(/(\(\"32px\.png\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/32px.png")');
-//        data = data.replace(/(\(\"40px\.png\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/40px.png")');
-//        data = data.replace(/(\(\"throbber\.gif\"\))/g, '("/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/throbber.gif")');
-//        $("<style type=\"text/css\">" + data + "</style>").appendTo(document.head);
-//    });
-
     var treeServiceModule = angular.module('treeService', []);
 
     treeServiceModule.factory('treeService', [ 'camAPI', '$q', function(camAPI, $q) {
@@ -75,15 +65,18 @@ define([ ], function() {
                 return findTopParentDefered.promise;
             };
 
-            var buildTreeDataByInstance = function(instance) {
-
+            var buildTreeDataByInstance = function(instance) {            	
                 var treeData = {};
                 treeData.id = instance.id;
                 treeData.definitionId = instance.processDefinitionId;
                 treeData.text = instance.processDefinitionKey;
-
-                var selected = instance.id === currentProcessInstanceId;
-                var styleClass = (!instance.endTime ? 'processOngoing' : 'processFinished');
+                var selected = instance.id === currentProcessInstanceId;                  
+                var styleClass = (instance.hasIncident ? 'processError' : (!instance.endTime ? 'processOngoing' : 'processFinished'));
+                                  
+                
+                console.log("and the instance is...");
+                console.log(instance);
+                
                 treeData.li_attr = {
                     'class' : styleClass
                 };
@@ -91,17 +84,33 @@ define([ ], function() {
                     'opened' : true,
                     'selected' : selected
                 };
-
                 return treeData;
             };
 
+            
+            var findProcessesWithIncident = function(instance) {
+            	var processWithIncidentDefer = $q.defer();   
+            	IncidentService = camAPI.resource('incident');
+            	IncidentService.get({
+            		processInstanceId: instance.id
+            	}, function(err, res) {
+            		if (err) {
+            			processWithIncidentDefer.reject(err);
+            		} else {
+            			var incidents = res;
+            			if (incidents != null && incidents.length > 0) {
+            				instance.hasIncident = true;
+            			}
+            			processWithIncidentDefer.resolve(instance);
+            		}
+            	});            	
+            	return processWithIncidentDefer.promise;
+            };
+            
             var enrichParentInstanceWithChildren = function(topInstance) {
-
                 var fillTheTreeDefer = $q.defer();
-
                 if (topInstance) {
                     var treeDataToBeFilled = buildTreeDataByInstance(topInstance);
-
                     enrichWithChildren(topInstance, treeDataToBeFilled).then(function(succInstance) {
                         fillTheTreeDefer.resolve(treeDataToBeFilled);
                     }, function(error) {
@@ -109,7 +118,6 @@ define([ ], function() {
                         fillTheTreeDefer.reject(error);
                     });
                 }
-
                 return fillTheTreeDefer.promise;
             };
 
@@ -152,6 +160,7 @@ define([ ], function() {
 
             findProcessInstanceById(currentProcessInstanceId)//
             .then(findTopParentInstance)//
+            .then(findProcessesWithIncident)//
             .then(enrichParentInstanceWithChildren)//
             .then(function(treeData) {
                 treeDataByCurrentTaskDefer.resolve(treeData);

@@ -10,8 +10,6 @@ define(
 			
 		    var css = '/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/user-styles.css';
 		    $.get(css, function(data) {
-		        // while including the css file we lose the context of the file path, so
-		        // we need to enrich the includes of the images with absolute url
 		        $("<style type=\"text/css\">" + data + "</style>").appendTo(document.head);
 		    });
 
@@ -99,8 +97,7 @@ define(
 					    $scope.highlightTask = function(element) {
 			    	
 							$http.post('/engine-rest/engine/default/history/activity-instance',
-									{processInstanceId: $scope.processInstanceId,
-									 position: {bottom: 30, right: -30}})
+									{processInstanceId: $scope.processInstanceId})
 									 .then(function(successCallback) {
 										
 										var activities = successCallback.data;
@@ -141,32 +138,45 @@ define(
 											}											
 
 											if ($.inArray(entry.activityType, ignoredElementTypes) == -1) {
-
 												//$scope.control.highlight(entry.activityId);
 												var canvas = $scope.control.getViewer().get('canvas');
-												canvas.addMarker(entry.activityId, 'highlight-'+taskStatus);
-																																					
-												
-											}
+												canvas.addMarker(entry.activityId, 'highlight-'+taskStatus);																																																	
+											}																																
+
+										});										
 											
 
-												
-										});
-										
-										// Only running instances should have a badge. (current blocking activity)
-											
-										
-//										var lastActivity = activities[activities.length - 1];
-//										
-//										if ($.inArray(lastActivity.activityType, ignoredElementTypes) == -1) {
-//											
-//										}
-											
-									});
+									 
+									 });
+							
+							$http.get('/engine-rest/engine/default/history/incident',
+									{processInstanceId: $scope.processInstanceId})
+									 .then(function(successCallback) {
+										 
+										 var incidents = successCallback.data;
+										 
+										 console.log(incidents.length);
+
+										 incidents.forEach(function(entry) {
+											 console.log(entry);
+										 });
+										 
+										 console.log("-----");
+										 
+										 incidents.forEach(function(entry) {
+											 console.log(entry);
+											 var canvas = $scope.control.getViewer().get('canvas');
+											 canvas.addMarker(entry.activityId, 'highlight-task-error');
+										 });
+										 
+									 });
+
+					    
 					    };
+					    					    
 					}];
 			
-
+		
 			var Configuration = function PluginConfiguration(ViewsProvider) {
 
 				ViewsProvider

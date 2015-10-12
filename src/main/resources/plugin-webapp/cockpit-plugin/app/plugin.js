@@ -112,17 +112,8 @@ function(angular, $, jstree, ngJsTree, treeService) {
 
                 var running = false;
                 activities.forEach(function(entry) {
-
-                    // If an element with no end time is present, the instance
-                    // is still running.
-                    if (!entry.endTime) {
-                        running = true;
-                    }
-
-                    var taskStatus = 'task-finished';
-                    if (running) {
-                        taskStatus = 'task-running';
-                    }
+                    // If an element with no end time is present, the instance is still running.
+                    var taskStatus = !entry.endTime ? 'task-running' : 'task-finished';
 
                     if ($.inArray(entry.activityType, ignoredElementTypes) == -1) {
                         // $scope.control.highlight(entry.activityId);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="processtree" default="deploy.jboss">
+<project name="elab-processtree-plugin" default="deploy.jboss">
 
 	<property file="build.properties" />
 	<property file="${user.home}/.camunda/build.properties" />
@@ -33,7 +33,11 @@
 				<include name="camunda-webapp-*.war"/> 
 			</fileset> 
 		</path> 
+		
 		<property name="cockpit.file" refid="cockpit.file.id"/> 
+		<echo message="Source: ${target.dir}/${ant.project.name}.jar"></echo>
+		<echo message="Destination: ${cockpit.file}"></echo>
+		
 		<war destfile="${cockpit.file}" update="true">
 			<zipfileset file="${target.dir}/${ant.project.name}.jar" fullpath="WEB-INF/lib/${ant.project.name}.jar" />
 		</war>

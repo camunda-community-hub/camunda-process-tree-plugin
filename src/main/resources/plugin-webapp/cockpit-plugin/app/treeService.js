@@ -20,6 +20,7 @@ define([ ], function() {
 
             var currentProcessInstanceId = task.processInstanceId;
             HistoryService = camAPI.resource('history');
+        	var IncidentService = camAPI.resource('incident');
 
             var findProcessInstanceById = function(currentProcessInstanceId) {
 
@@ -71,8 +72,8 @@ define([ ], function() {
                 treeData.definitionId = instance.processDefinitionId;
                 treeData.text = instance.processDefinitionKey;
                 var selected = instance.id === currentProcessInstanceId; 
-                
-                var styleClass = (instance.hasIncident ? 'processError' : (!instance.endTime ? 'processOngoing' : 'processFinished'));
+                                
+                var styleClass = !instance.endTime ? 'processOngoing' : 'processFinished';
                                 
                 treeData.li_attr = {
                     'class' : styleClass
@@ -84,23 +85,60 @@ define([ ], function() {
                 return treeData;
             };
             
-            var findProcessesWithIncident = function(instance) {
-            	var processWithIncidentDefer = $q.defer();   
-            	var IncidentService = camAPI.resource('incident');
+            var findProcessesWithIncident = function(treeData, parentDefer) {
+            	var processWithIncidentDefer = parentDefer || $q.defer();
             	IncidentService.get({
-            		processInstanceId: instance.id
+        		processInstanceId: treeData.id
             	}, function(err, res) {
-            		if (err) {
-            			processWithIncidentDefer.reject(err);
-            		} else {
-            			var incidents = res;
-            			if (incidents != null && incidents.length > 0) {
-            				instance.hasIncident = true;
-            			}
-            			processWithIncidentDefer.resolve(instance);
-            		}
-            	});            	
+	        		if (err) {
+	        			processWithIncidentDefer.reject(err);
+	        		} else {
+	        			console.log('Res:');
+	        			console.log(res);
+	        			console.log(res.length);
+	        			if (res.length > 0) {
+		        			treeData.li_attr = {
+		        					'class' : 'processError'
+		                    }
+	        			} else {
+		        			treeData.li_attr = {
+		        					'class' : 'processOngoing'
+		                    }	        				
+	        			}
+	                	if (!treeData.children) {
+	                		processWithIncidentDefer.resolve(treeData);
+	                	} else {	                		
+	                		var childrenDeferred = [];            		
+	    	            	for (i = 0; i < treeData.children.length; i++) {
+	    	            		var childDefer = $q.defer();
+	    	            		childrenDeferred[i] = findProcessesWithIncident(treeData.children[i], childDefer);
+	    	            	}
+	    	            	$q.all(childrenDeferred).then(function() {
+	    	            		processWithIncidentDefer.resolve(treeData);
+	    	            	});
+	                	}            		        		        		
+	        		}
+            	});
             	return processWithIncidentDefer.promise;
+            	
+//            	var processWithIncidentDefer = $q.defer();   
+//            	var IncidentService = camAPI.resource('incident');
+//            	IncidentService.get({
+//            		processInstanceId: treeData.id
+//            	}, function(err, res) {
+//            		if (err) {
+//            			processWithIncidentDefer.reject(err);
+//            		} else {
+//            			console.log('ProcessInstanceId: ' + treeData.id);
+//            			console.log('Incidents found: '+ res.length);
+//            			var incidents = res;
+//            			if (incidents != null && incidents.length > 0) {
+//            				treeData.hasIncident = true;
+//            			}
+//            			processWithIncidentDefer.resolve(treeData);
+//            		}
+//            	});            	
+//            	return processWithIncidentDefer.promise;
             };
             
             var enrichParentInstanceWithChildren = function(topInstance) {
@@ -155,9 +193,9 @@ define([ ], function() {
             var treeDataByCurrentTaskDefer = $q.defer();
 
             findProcessInstanceById(currentProcessInstanceId)//
-            .then(findTopParentInstance)//
-            .then(findProcessesWithIncident)//
+            .then(findTopParentInstance)//            
             .then(enrichParentInstanceWithChildren)//
+            .then(findProcessesWithIncident)//
             .then(function(treeData) {
                 treeDataByCurrentTaskDefer.resolve(treeData);
             }, function(error) {

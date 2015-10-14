@@ -134,7 +134,7 @@
         </configuration>
       </plugin>
       
-      <plugin>
+      <!-- plugin>
         <groupId>com.github.klieber</groupId>
         <artifactId>phantomjs-maven-plugin</artifactId>
         <version>0.7</version>
@@ -168,7 +168,6 @@
 					<source>src/test/resources/test-lib/require.js</source>
 					<source>src/test/resources/test-lib/angular.js</source>
 					<source>src/test/resources/test-lib/angular-mocks.js</source>
-					<!-- source>src/test/resources/test-lib/ngMock.js</source -->
 				</preloadSources>
               <webDriverCapabilities>
                 <capability>
@@ -180,12 +179,7 @@
               <customRunnerConfiguration>src/test/resources/customConfig.txt</customRunnerConfiguration>
             </configuration>
 			
-			<!-- configuration>
-
-				
-				<haltOnFailure>true</haltOnFailure>
-			</configuration -->
-		</plugin>
+		</plugin -->
       
     </plugins>
   </build>

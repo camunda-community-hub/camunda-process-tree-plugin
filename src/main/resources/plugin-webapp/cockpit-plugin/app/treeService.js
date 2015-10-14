@@ -86,6 +86,7 @@ define([ ], function() {
             };
             
             var findProcessesWithIncident = function(treeData, parentDefer) {
+            	            	
             	var processWithIncidentDefer = parentDefer || $q.defer();
             	IncidentService.get({
         		processInstanceId: treeData.id
@@ -93,17 +94,22 @@ define([ ], function() {
 	        		if (err) {
 	        			processWithIncidentDefer.reject(err);
 	        		} else {
-	        			console.log('Res:');
 	        			console.log(res);
-	        			console.log(res.length);
 	        			if (res.length > 0) {
-		        			treeData.li_attr = {
-		        					'class' : 'processError'
-		                    }
+	        				var hasRootIncident = false;
+	        				for (i = 0; i < res.length; i++) {
+	        					if (res[i].id == res[i].rootCauseIncidentId) {
+	        						hasRootIncident = true;
+	        					}	
+	        					//remember activity id for marking here???
+	        				}
+	        				if (hasRootIncident) {
+			        			treeData.li_attr = {
+			        					'class' : 'processError'
+			                    }
+	        				}
 	        			} else {
-		        			treeData.li_attr = {
-		        					'class' : 'processOngoing'
-		                    }	        				
+	        				//leave calculated.
 	        			}
 	                	if (!treeData.children) {
 	                		processWithIncidentDefer.resolve(treeData);
@@ -121,24 +127,6 @@ define([ ], function() {
             	});
             	return processWithIncidentDefer.promise;
             	
-//            	var processWithIncidentDefer = $q.defer();   
-//            	var IncidentService = camAPI.resource('incident');
-//            	IncidentService.get({
-//            		processInstanceId: treeData.id
-//            	}, function(err, res) {
-//            		if (err) {
-//            			processWithIncidentDefer.reject(err);
-//            		} else {
-//            			console.log('ProcessInstanceId: ' + treeData.id);
-//            			console.log('Incidents found: '+ res.length);
-//            			var incidents = res;
-//            			if (incidents != null && incidents.length > 0) {
-//            				treeData.hasIncident = true;
-//            			}
-//            			processWithIncidentDefer.resolve(treeData);
-//            		}
-//            	});            	
-//            	return processWithIncidentDefer.promise;
             };
             
             var enrichParentInstanceWithChildren = function(topInstance) {

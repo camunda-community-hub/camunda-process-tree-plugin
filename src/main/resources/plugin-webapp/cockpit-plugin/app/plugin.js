@@ -5,6 +5,7 @@ define([ 'angular', 'jquery', //
 
 function(angular, $, jstree, ngJsTree, treeService) {
 
+	
     var css = '/camunda/api/tasklist/plugin/process-tree-plugin/static/lib/themes/default/user-styles.css';
     $.get(css, function(data) {
         $("<style type=\"text/css\">" + data + "</style>").appendTo(document.head);
@@ -29,11 +30,14 @@ function(angular, $, jstree, ngJsTree, treeService) {
         });
 
         $scope.$watch('processDefinition', function(newValue, oldValue) {
-
             assignDiagramToWidget(newValue);
 
         });
 
+    	console.log('TREE SERVICE!!???!');
+    	console.log(pluginModule);
+        
+        
         var assignDiagramToWidget = function(processDefinition) {
 
             $scope.processDefinition = processDefinition;
@@ -135,7 +139,6 @@ function(angular, $, jstree, ngJsTree, treeService) {
                         var canvas = $scope.control.getViewer().get('canvas');
                         canvas.addMarker(entry.activityId, 'highlight-task-error');
                     });
-
                 }
             });
         };

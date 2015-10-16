@@ -48,7 +48,7 @@ Discover more Cockpit plugins in the
 * Works only inside the camunda tasklist
 
 ## Contributors
-The Software Development Team of [WDW eLab GmbH](http://www.wde-elab.de) is responsible for the Design and Implementation of this plugin.
+The Software Development Team of [WDW eLab GmbH](http://www.wdw-elab.de) is responsible for the Design and Implementation of this plugin.
 
 ![Screenshot](elab_logo.png)
 
@@ -56,7 +56,7 @@ WDW eLab GmbH is an innovative IT company and has great experience with complex 
 
 We are proud to be an official camunda partner!
 
-Feel free to contact us via [Email](kontakt@wdw-elab.de)
+Feel free to contact us via [Email](mailto:kontakt@wdw-elab.de)
 
 ## License
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
